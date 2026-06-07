@@ -24,11 +24,9 @@ function TeamPanel({
       <p className="mt-1 text-xl font-bold leading-tight text-white">
         {team.name}
       </p>
-      {team.players.length > 1 && (
-        <p className="mt-1 text-sm text-zinc-500">
-          {team.players.map((p) => p.name).join(', ')}
-        </p>
-      )}
+      <p className="mt-1 text-sm text-zinc-500">
+        {team.players.map((p) => p.name).join(', ')}
+      </p>
     </div>
   )
 }

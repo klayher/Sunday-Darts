@@ -1,4 +1,4 @@
-# Darts Night
+# Sunday Darts
 
 > Random teams. Double elimination. No spreadsheet.
 

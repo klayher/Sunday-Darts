@@ -9,6 +9,7 @@ import { Button, Card } from './ui'
 import { CurrentMatchCard } from './CurrentMatchCard'
 import { UpcomingMatches } from './UpcomingMatches'
 import { Standings } from './Standings'
+import { MatchHistory } from './MatchHistory'
 import { AutosaveIndicator } from './AutosaveIndicator'
 
 function Stat({ value, label }: { value: number; label: string }) {
@@ -28,12 +29,14 @@ export function TournamentScreen({
   onUndo,
   onRequestReset,
   onRequestBackToSetup,
+  onRenameTeam,
 }: {
   tournament: Tournament
   onPickWinner: (teamId: string) => void
   onUndo: () => void
   onRequestReset: () => void
   onRequestBackToSetup: () => void
+  onRenameTeam: (teamId: string, name: string) => void
 }) {
   const c = counts(tournament)
   const match = currentMatch(tournament)
@@ -44,7 +47,7 @@ export function TournamentScreen({
     <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-8">
       <header className="mb-5 flex items-center justify-between">
         <h1 className="text-2xl font-extrabold tracking-tight text-white">
-          Darts Night
+          Sunday Darts
         </h1>
         <Button variant="ghost" className="min-h-[44px] px-3 text-sm" onClick={onRequestBackToSetup}>
           Setup
@@ -90,7 +93,8 @@ export function TournamentScreen({
 
       <div className="mt-8 space-y-8">
         <UpcomingMatches tournament={tournament} />
-        <Standings tournament={tournament} />
+        <Standings tournament={tournament} onRenameTeam={onRenameTeam} />
+        <MatchHistory tournament={tournament} />
       </div>
 
       {/* Danger zone */}

@@ -61,19 +61,61 @@ export function teamCountFor(playerCount: number, size: TeamSize): number {
   return Math.ceil(playerCount / size)
 }
 
+/** Clean, pub/darts-themed team names. Assigned at random, editable later. */
+export const FUN_TEAM_NAMES: string[] = [
+  'The Checkout Crew',
+  'Flight Risk',
+  'Triple Trouble',
+  'The Double Ones',
+  'No Bull',
+  'The Ton Eighties',
+  'Wire Walkers',
+  'The Oche Club',
+  'Bullseye Bureau',
+  'The Treble Makers',
+  'Game Shot',
+  'The Arrows',
+  'Tungsten Titans',
+  'The Finishers',
+  'Robin Hoods',
+  'Point Blank',
+  'The Steel Tips',
+  'Around the Clock',
+  'The Nine Darters',
+  'Aim High',
+  'The Big Fish',
+  'Cork Screws',
+  'The Madhouse',
+  'Shanghai Club',
+]
+
+/** Pick distinct fun names for `count` teams, numbering extras if we run out. */
+function pickTeamNames(count: number): string[] {
+  const pool = shuffle(FUN_TEAM_NAMES)
+  const names: string[] = []
+  for (let i = 0; i < count; i += 1) {
+    const cycle = Math.floor(i / pool.length)
+    const base = pool[i % pool.length]
+    names.push(cycle === 0 ? base : `${base} ${cycle + 1}`)
+  }
+  return names
+}
+
 /**
  * Shuffle players and chunk them into teams of `size`. If the count does not
- * divide evenly, the final team is smaller (never empty).
+ * divide evenly, the final team is smaller (never empty). Each team gets a clean
+ * darts-themed name; player names stay attached and are shown in the UI.
  */
 export function buildTeams(names: string[], size: TeamSize): Team[] {
   const players: Player[] = names.map((name) => ({ id: uid('p'), name }))
   const shuffled = shuffle(players)
   const teams: Team[] = []
+  const teamNames = pickTeamNames(Math.ceil(shuffled.length / size))
   for (let i = 0; i < shuffled.length; i += size) {
     const members = shuffled.slice(i, i + size)
     teams.push({
       id: uid('t'),
-      name: teamName(members),
+      name: teamNames[teams.length],
       players: members,
       wins: 0,
       losses: 0,
@@ -83,11 +125,11 @@ export function buildTeams(names: string[], size: TeamSize): Team[] {
   return teams
 }
 
-function teamName(players: Player[]): string {
-  if (players.length === 1) return players[0].name
-  if (players.length === 2) return `${players[0].name} & ${players[1].name}`
-  const last = players[players.length - 1].name
-  return `${players.slice(0, -1).map((p) => p.name).join(', ')} & ${last}`
+/** Rename a team while keeping its id (and everything else) stable. */
+export function renameTeam(teams: Team[], teamId: string, name: string): Team[] {
+  const trimmed = name.trim()
+  if (trimmed.length === 0) return teams
+  return teams.map((t) => (t.id === teamId ? { ...t, name: trimmed } : t))
 }
 
 /* ------------------------------------------------------------------ */
@@ -406,4 +448,37 @@ export function standings(t: Tournament): Team[] {
     if (a.wins !== b.wins) return b.wins - a.wins
     return a.name.localeCompare(b.name)
   })
+}
+
+/** Decided matches (a winner and a loser), newest first. Byes are excluded. */
+export function completedResults(t: Tournament): Match[] {
+  return t.completedMatches
+    .filter((m) => m.status === 'complete' && m.winnerId && m.loserId)
+    .slice()
+    .reverse()
+}
+
+/** Plain-text results summary, suitable for pasting into a text message. */
+export function buildResultsText(t: Tournament): string {
+  const lines: string[] = []
+  lines.push('🎯 Sunday Darts — Results')
+  lines.push('')
+
+  const champ = teamById(t, t.championTeamId)
+  if (champ) {
+    lines.push(`Champion: ${champ.name}`)
+    if (champ.players.length > 0) {
+      lines.push(`Players: ${champ.players.map((p) => p.name).join(', ')}`)
+    }
+    lines.push(`Record: ${champ.wins}W–${champ.losses}L`)
+    lines.push('')
+  }
+
+  lines.push('Standings')
+  standings(t).forEach((team, i) => {
+    const tag = t.championTeamId === team.id ? ' (Champion)' : ''
+    lines.push(`${i + 1}. ${team.name} — ${team.wins}W–${team.losses}L${tag}`)
+  })
+
+  return lines.join('\n')
 }

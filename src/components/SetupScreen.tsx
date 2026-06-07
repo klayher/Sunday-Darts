@@ -32,6 +32,7 @@ export function SetupScreen({
   onRandomize,
   onStart,
   onClear,
+  onRenameTeam,
 }: {
   namesText: string
   teamSize: TeamSize
@@ -41,6 +42,7 @@ export function SetupScreen({
   onRandomize: () => void
   onStart: () => void
   onClear: () => void
+  onRenameTeam: (teamId: string, name: string) => void
 }) {
   const names = useMemo(() => parseNames(namesText), [namesText])
   const duplicates = useMemo(() => findDuplicates(names), [names])
@@ -59,7 +61,7 @@ export function SetupScreen({
     <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-10">
       <header className="text-center">
         <h1 className="text-4xl font-extrabold tracking-tight text-white">
-          Darts Night
+          Sunday Darts
         </h1>
         <p className="mt-2 text-zinc-400">
           Random teams. Double elimination. No spreadsheet.
@@ -171,7 +173,7 @@ export function SetupScreen({
                 Players changed since these teams were made. Randomize again.
               </Note>
             )}
-            <TeamPreview teams={previewTeams} />
+            <TeamPreview teams={previewTeams} onRenameTeam={onRenameTeam} />
 
             <FormatSummary
               players={previewTeams.reduce(

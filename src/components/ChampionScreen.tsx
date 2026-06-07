@@ -1,9 +1,14 @@
 import { useState } from 'react'
 import type { Tournament } from '../types'
-import { teamById } from '../engine'
+import { buildResultsText, teamById } from '../engine'
 import { Button, Card } from './ui'
 import { Standings } from './Standings'
 import { Confetti } from './Confetti'
+
+type CopyState =
+  | { kind: 'idle' }
+  | { kind: 'copied' }
+  | { kind: 'fallback'; text: string }
 
 export function ChampionScreen({
   tournament,
@@ -13,7 +18,23 @@ export function ChampionScreen({
   onNewTournament: () => void
 }) {
   const [showStandings, setShowStandings] = useState(false)
+  const [copy, setCopy] = useState<CopyState>({ kind: 'idle' })
   const champion = teamById(tournament, tournament.championTeamId)
+
+  const handleCopy = async () => {
+    const text = buildResultsText(tournament)
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text)
+        setCopy({ kind: 'copied' })
+        window.setTimeout(() => setCopy({ kind: 'idle' }), 2400)
+        return
+      }
+    } catch {
+      // fall through to the textarea fallback below
+    }
+    setCopy({ kind: 'fallback', text })
+  }
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-12">
@@ -45,7 +66,7 @@ export function ChampionScreen({
           <h1 className="text-3xl font-extrabold leading-tight text-white">
             {champion?.name ?? 'Unknown'}
           </h1>
-          {champion && champion.players.length > 1 && (
+          {champion && champion.players.length > 0 && (
             <p className="mt-2 text-zinc-400">
               {champion.players.map((p) => p.name).join(', ')}
             </p>
@@ -62,14 +83,38 @@ export function ChampionScreen({
         <Button variant="primary" fullWidth onClick={onNewTournament}>
           Start new tournament
         </Button>
+        <Button variant="secondary" fullWidth onClick={handleCopy}>
+          Copy results
+        </Button>
         <Button
-          variant="secondary"
+          variant="ghost"
           fullWidth
           onClick={() => setShowStandings((s) => !s)}
         >
           {showStandings ? 'Hide final standings' : 'View final standings'}
         </Button>
       </div>
+
+      {copy.kind === 'copied' && (
+        <p className="mt-3 text-center text-sm font-medium text-accent">
+          Results copied to clipboard
+        </p>
+      )}
+
+      {copy.kind === 'fallback' && (
+        <div className="mt-4 space-y-2">
+          <p className="text-sm text-zinc-400">
+            Couldn't copy automatically — select and copy the text below.
+          </p>
+          <textarea
+            readOnly
+            value={copy.text}
+            rows={Math.min(12, copy.text.split('\n').length + 1)}
+            onFocus={(e) => e.currentTarget.select()}
+            className="w-full resize-y rounded-2xl border border-ink-700 bg-ink-900 p-4 font-mono text-sm leading-relaxed text-zinc-200 focus:border-accent/60 focus:outline-none"
+          />
+        </div>
+      )}
 
       {showStandings && (
         <div className="mt-8">

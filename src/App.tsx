@@ -5,6 +5,7 @@ import {
   createTournament,
   parseNames,
   recordResult,
+  renameTeam,
   teamById,
   undo,
 } from './engine'
@@ -52,6 +53,29 @@ export default function App() {
 
   const handleClear = useCallback(() => {
     setState((s) => ({ ...s, namesText: '', previewTeams: null }))
+  }, [])
+
+  // Rename a preview team (setup screen). Ids stay stable; only the name changes.
+  const handleRenamePreviewTeam = useCallback((teamId: string, name: string) => {
+    setState((s) => {
+      if (!s.previewTeams) return s
+      return { ...s, previewTeams: renameTeam(s.previewTeams, teamId, name) }
+    })
+  }, [])
+
+  // Rename a team mid-tournament. This touches only the name, not advancement
+  // or history, so it never interferes with the engine or the undo stack.
+  const handleRenameTeam = useCallback((teamId: string, name: string) => {
+    setState((s) => {
+      if (!s.tournament) return s
+      return {
+        ...s,
+        tournament: {
+          ...s.tournament,
+          teams: renameTeam(s.tournament.teams, teamId, name),
+        },
+      }
+    })
   }, [])
 
   const handleStart = useCallback(() => {
@@ -168,6 +192,7 @@ export default function App() {
           onRandomize={handleRandomize}
           onStart={handleStart}
           onClear={handleClear}
+          onRenameTeam={handleRenamePreviewTeam}
         />
       ) : t.status === 'complete' ? (
         <ChampionScreen tournament={t} onNewTournament={handleNewTournament} />
@@ -178,6 +203,7 @@ export default function App() {
           onUndo={handleUndo}
           onRequestReset={requestReset}
           onRequestBackToSetup={requestBackToSetup}
+          onRenameTeam={handleRenameTeam}
         />
       )}
 

@@ -1,8 +1,15 @@
 import type { Tournament } from '../types'
 import { standings, teamStatus } from '../engine'
 import { Badge, Card } from './ui'
+import { EditableTeamName } from './EditableTeamName'
 
-export function Standings({ tournament }: { tournament: Tournament }) {
+export function Standings({
+  tournament,
+  onRenameTeam,
+}: {
+  tournament: Tournament
+  onRenameTeam?: (teamId: string, name: string) => void
+}) {
   const teams = standings(tournament)
 
   return (
@@ -27,12 +34,18 @@ export function Standings({ tournament }: { tournament: Tournament }) {
               }`}
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold text-white">{team.name}</p>
-                {team.players.length > 1 && (
-                  <p className="truncate text-sm text-zinc-500">
-                    {team.players.map((p) => p.name).join(', ')}
-                  </p>
+                {onRenameTeam ? (
+                  <EditableTeamName
+                    name={team.name}
+                    onRename={(name) => onRenameTeam(team.id, name)}
+                    className="font-semibold text-white"
+                  />
+                ) : (
+                  <p className="truncate font-semibold text-white">{team.name}</p>
                 )}
+                <p className="truncate text-sm text-zinc-500">
+                  {team.players.map((p) => p.name).join(', ')}
+                </p>
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-sm font-bold text-zinc-200">
