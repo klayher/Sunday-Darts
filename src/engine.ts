@@ -458,26 +458,41 @@ export function completedResults(t: Tournament): Match[] {
     .reverse()
 }
 
+function teamWithPlayers(team: Team): string {
+  if (team.players.length === 0) return team.name
+  const players = team.players.map((p) => p.name).join(' / ')
+  return `${team.name} (${players})`
+}
+
+function recordLabel(team: Team): string {
+  return `${team.wins}–${team.losses}`
+}
+
 /** Plain-text results summary, suitable for pasting into a text message. */
 export function buildResultsText(t: Tournament): string {
   const lines: string[] = []
-  lines.push('🎯 Sunday Darts — Results')
+  lines.push('Sunday Darts Results')
   lines.push('')
 
   const champ = teamById(t, t.championTeamId)
   if (champ) {
-    lines.push(`Champion: ${champ.name}`)
-    if (champ.players.length > 0) {
-      lines.push(`Players: ${champ.players.map((p) => p.name).join(', ')}`)
-    }
-    lines.push(`Record: ${champ.wins}W–${champ.losses}L`)
+    lines.push('Champion:')
+    lines.push(teamWithPlayers(champ))
+    lines.push(`Record: ${recordLabel(champ)}`)
     lines.push('')
   }
 
-  lines.push('Standings')
+  lines.push('Final standings:')
   standings(t).forEach((team, i) => {
-    const tag = t.championTeamId === team.id ? ' (Champion)' : ''
-    lines.push(`${i + 1}. ${team.name} — ${team.wins}W–${team.losses}L${tag}`)
+    const status =
+      t.championTeamId === team.id
+        ? ' — Champion'
+        : team.eliminated
+          ? ' — Eliminated'
+          : ''
+    lines.push(
+      `${i + 1}. ${teamWithPlayers(team)} — ${recordLabel(team)}${status}`,
+    )
   })
 
   return lines.join('\n')
