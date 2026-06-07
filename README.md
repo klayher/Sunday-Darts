@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# Darts Night
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Random teams. Double elimination. No spreadsheet.
 
-Currently, two official plugins are available:
+A clean, mobile-first web app for running a casual darts tournament. Enter player
+names, randomly generate teams, run a full double-elimination bracket, undo
+mistakes, and crown a champion. Everything runs in the browser and is saved to
+`localStorage`, so the tournament survives a refresh or an accidental app close.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+No backend. No accounts. No database.
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Setup** — paste player names (one per line), pick Singles / Doubles / Triples,
+  and randomize teams. Validates for too-few players, duplicate names, and odd
+  player counts (one smaller team is allowed and clearly noted).
+- **Double elimination** — every team is out after two losses. Handles any number
+  of teams (not just powers of two) using byes, and resolves the grand final
+  correctly, including a bracket-reset final if the losers-bracket team wins.
+- **One match at a time** — the current match is the obvious focus, with large
+  tap targets to record a winner.
+- **Undo** — a full snapshot is saved before every result, so a wrong tap is one
+  tap to fix.
+- **Standings & up-next** — see active/eliminated teams, records, and the next
+  few matches.
+- **Resumes automatically** — reopen the page and the tournament is right where
+  you left it.
 
-## Expanding the ESLint configuration
+## Tech
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React + TypeScript
+- Vite
+- Tailwind CSS
+- Client-side only, state persisted in `localStorage`
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Develop
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Build
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+The static site is emitted to `dist/`.
+
+## Deploy to Netlify
+
+This repo includes a `netlify.toml`. Either:
+
+- **Connect the repo** in Netlify (build command `npm run build`, publish
+  directory `dist`), or
+- **Drag-and-drop** the `dist/` folder onto Netlify after running
+  `npm run build`.
