@@ -35,3 +35,113 @@ button {
 textarea {
   -webkit-appearance: none;
 }
+
+/* ------------------------------------------------------------------ */
+/* Polish animations (CSS-only, GPU-friendly: opacity + transform)    */
+/* ------------------------------------------------------------------ */
+
+/* Current match card entrance */
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-card-in {
+  animation: cardIn 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Winning team card highlight (< 400ms) */
+@keyframes winnerPop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.team-won {
+  animation: winnerPop 340ms ease-out both;
+  box-shadow:
+    0 0 0 2px rgba(52, 211, 153, 0.7),
+    0 0 26px rgba(52, 211, 153, 0.35);
+}
+.team-lost {
+  opacity: 0.4;
+  transition: opacity 220ms ease;
+}
+
+/* Autosave indicator pulse */
+@keyframes savedPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+}
+.saved-dot-pulse {
+  animation: savedPulse 600ms ease-out;
+}
+
+/* Champion trophy reveal */
+@keyframes trophyPop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-trophy {
+  animation: trophyPop 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fadeUp 420ms ease-out both;
+}
+
+/* Reduced motion: strip non-essential motion, keep state legible */
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-in,
+  .team-won,
+  .saved-dot-pulse,
+  .animate-trophy,
+  .animate-fade-up {
+    animation: none !important;
+  }
+  .team-won {
+    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.7);
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
+}

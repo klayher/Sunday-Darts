@@ -3,6 +3,7 @@ import type { Tournament } from '../types'
 import { teamById } from '../engine'
 import { Button, Card } from './ui'
 import { Standings } from './Standings'
+import { Confetti } from './Confetti'
 
 export function ChampionScreen({
   tournament,
@@ -16,11 +17,12 @@ export function ChampionScreen({
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-12">
+      <Confetti />
       <div className="text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+        <p className="animate-fade-up text-sm font-semibold uppercase tracking-[0.2em] text-accent">
           Champion
         </p>
-        <div className="mx-auto mt-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent/15">
+        <div className="animate-trophy mx-auto mt-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent/15 ring-1 ring-accent/30">
           <svg
             viewBox="0 0 24 24"
             className="h-10 w-10 text-accent"
@@ -39,7 +41,7 @@ export function ChampionScreen({
           </svg>
         </div>
 
-        <Card className="mt-6 p-7">
+        <Card className="animate-fade-up mt-6 p-7">
           <h1 className="text-3xl font-extrabold leading-tight text-white">
             {champion?.name ?? 'Unknown'}
           </h1>

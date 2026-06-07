@@ -9,15 +9,19 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const base =
   'inline-flex items-center justify-center gap-2 rounded-2xl px-5 font-semibold ' +
-  'min-h-[52px] text-base transition active:scale-[0.985] ' +
-  'disabled:opacity-40 disabled:active:scale-100 disabled:cursor-not-allowed ' +
-  'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60'
+  'min-h-[52px] text-base select-none ' +
+  'transition-[transform,background-color,box-shadow,opacity] duration-150 ease-out ' +
+  'active:scale-[0.97] active:translate-y-px ' +
+  'disabled:opacity-40 disabled:active:scale-100 disabled:active:translate-y-0 disabled:cursor-not-allowed ' +
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950'
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-accent text-ink-950 shadow-lg shadow-accent/20 hover:bg-accent-600',
+  primary:
+    'bg-accent text-ink-950 shadow-lg shadow-accent/20 hover:bg-accent-600 hover:shadow-accent/30 active:shadow-md',
   secondary: 'bg-ink-700 text-white hover:bg-ink-600',
   ghost: 'bg-transparent text-zinc-300 hover:bg-ink-800',
-  danger: 'bg-transparent text-red-300 hover:bg-red-500/10 border border-red-500/30',
+  danger:
+    'bg-transparent text-red-300 hover:bg-red-500/10 border border-red-500/30',
 }
 
 export function Button({

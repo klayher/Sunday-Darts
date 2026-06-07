@@ -9,6 +9,7 @@ import { Button, Card } from './ui'
 import { CurrentMatchCard } from './CurrentMatchCard'
 import { UpcomingMatches } from './UpcomingMatches'
 import { Standings } from './Standings'
+import { AutosaveIndicator } from './AutosaveIndicator'
 
 function Stat({ value, label }: { value: number; label: string }) {
   return (
@@ -51,6 +52,9 @@ export function TournamentScreen({
       </header>
 
       {/* Status bar */}
+      <div className="mb-2 flex justify-end px-1">
+        <AutosaveIndicator signal={tournament} />
+      </div>
       <Card className="mb-5 flex items-center divide-x divide-ink-700 p-4">
         <Stat value={c.active} label="Active" />
         <Stat value={c.eliminated} label="Out" />
@@ -60,6 +64,7 @@ export function TournamentScreen({
       {/* Current match */}
       {match && teamA && teamB ? (
         <CurrentMatchCard
+          key={match.id}
           match={match}
           teamA={teamA}
           teamB={teamB}
