@@ -1,6 +1,6 @@
 {
   "name": "Sunday Darts",
-  "short_name": "Darts",
+  "short_name": "Sunday Darts",
   "description": "Random teams. Double elimination. No spreadsheet.",
   "start_url": "/",
   "scope": "/",
