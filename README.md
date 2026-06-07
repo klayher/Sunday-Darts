@@ -1,5 +1,9 @@
 # Sunday Darts
 
+<p align="center">
+  <img src="public/sunday-darts-preview.png" alt="Sunday Darts preview" width="900" />
+</p>
+
 > Random teams. Double elimination. No spreadsheet.
 
 A clean, mobile-first web app for running a casual darts tournament. Enter player names, randomly generate teams, run a full double-elimination bracket, undo mistakes, and crown a champion. Everything runs in the browser and is saved to `localStorage`, so the tournament survives refreshes, accidental tab closes, and reopening the app later.
